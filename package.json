@@ -1,0 +1,16 @@
+{
+  "name": "simple-file-server",
+  "version": "1.0.0",
+  "description": "a simple file server",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon .",
+    "start": "node index.js",
+    "test": "node tests.js"
+  },
+  "author": "A",
+  "license": "ISC",
+  "dependencies": {
+    "mime": "^2.5.2"
+  }
+}
