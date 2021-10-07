@@ -72,15 +72,15 @@ const STATUS_CODES = {
 const http = require('http'),
   fs = require('fs');
 
-var methods = Object.create(null);
+const methods = Object.create(null);
 
 function urlToPath(url) {
-  var path = require('url').parse(url).pathname;
+  const path = require('url').parse(url).pathname;
   return '.' + decodeURIComponent(path);
 }
 
 function respondeErrorOrNothing(respond) {
-  return function (error) {
+  return (error) => {
     if (error) {
       respond(500, error.toString());
     } else {
@@ -89,7 +89,7 @@ function respondeErrorOrNothing(respond) {
   };
 }
 
-const server = http.createServer(function (request, response) {
+const server = http.createServer((request, response) => {
   function respond(code, body, type) {
     if (!type) {
       type = 'text/plain';
@@ -100,7 +100,6 @@ const server = http.createServer(function (request, response) {
     } else {
       response.end(body);
     }
-    console.log(`>> ${request.method} ${urlToPath(request.url)} ${code}`);
   }
   if (request.method in methods) {
     methods[request.method](urlToPath(request.url), respond, request);
@@ -109,19 +108,19 @@ const server = http.createServer(function (request, response) {
   }
 });
 
-server.listen(PORT, function () {
+server.listen(PORT, () => {
   // const address = this.address();
   console.log(`Listening at http://localhost:${PORT}`);
 });
 
-methods.GET = function (path, respond) {
-  fs.stat(path, function (error, stats) {
+methods.GET = (path, respond) => {
+  fs.stat(path, (error, stats) => {
     if (error && error.code == 'ENOENT') {
       respond(404, 'File not found');
     } else if (error) {
       respond(500, error.toString());
     } else if (stats.isDirectory()) {
-      fs.readdir(path, function (error, files) {
+      fs.readdir(path, (error, files) => {
         if (error) {
           respond(500, error.toString());
         } else {
@@ -134,8 +133,8 @@ methods.GET = function (path, respond) {
   });
 };
 
-methods.DELETE = function (path, respond) {
-  fs.stat(path, function (error, stats) {
+methods.DELETE = (path, respond) => {
+  fs.stat(path, (error, stats) => {
     if (error && error.code == 'ENOENT') {
       /* If file does not exist, it's OK. We wanted to delete a file and it's
        * gone. */
@@ -150,7 +149,7 @@ methods.DELETE = function (path, respond) {
   });
 };
 
-methods.PUT = function (path, respond, request) {
+methods.PUT = (path, respond, request) => {
   const outStream = fs.createWriteStream(path);
   outStream.on('error', (error) => {
     respond(500, error.toString());
